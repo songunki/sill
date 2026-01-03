@@ -14,6 +14,8 @@
             font-family: 'Inter', 'Noto+Sans KR', sans-serif;
             background-color: #050505;
             color: #ffffff;
+            margin: 0;
+            padding: 0;
         }
         .gradient-text {
             background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
@@ -25,6 +27,14 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        /* 로딩 중 검은 화면 방지 */
+        #root:empty {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #050505;
+        }
     </style>
 <script type="importmap">
 {
@@ -32,10 +42,13 @@
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
     "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3"
   }
 }
 </script>
+<!-- 브라우저가 직접 TSX를 해석할 수 있도록 하는 엔트리 포인트 추가 -->
+<script type="module" src="./index.tsx"></script>
 </head>
 <body>
     <div id="root"></div>

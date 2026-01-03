@@ -18,15 +18,23 @@ export const AIConsultant: React.FC = () => {
   }, [messages, isTyping]);
 
   const handleSend = async () => {
+    const apiKey = process.env.API_KEY;
+    
     if (!input.trim() || isTyping) return;
     
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+
+    if (!apiKey) {
+      setMessages(prev => [...prev, { role: 'bot', text: "현재 시스템 설정 중입니다. 공식 번호(02-1234-5678)로 문의주시면 감사하겠습니다." }]);
+      return;
+    }
+
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: userMsg,
@@ -39,8 +47,8 @@ export const AIConsultant: React.FC = () => {
       const botText = response.text || "죄송합니다. 메시지를 이해하지 못했습니다. 다시 말씀해 주시겠어요?";
       setMessages(prev => [...prev, { role: 'bot', text: botText }]);
     } catch (error) {
-      console.error(error);
-      setMessages(prev => [...prev, { role: 'bot', text: "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." }]);
+      console.error("AI Error:", error);
+      setMessages(prev => [...prev, { role: 'bot', text: "문의량이 많아 잠시 후에 다시 시도해 주세요." }]);
     } finally {
       setIsTyping(false);
     }
@@ -52,6 +60,7 @@ export const AIConsultant: React.FC = () => {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/40 z-[60] hover:scale-110 active:scale-95 transition-all group"
+        aria-label="AI 상담 열기"
       >
         <span className="text-white text-2xl group-hover:rotate-12 transition-transform">✨</span>
         <div className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-bounce">
